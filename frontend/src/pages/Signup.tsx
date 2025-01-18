@@ -5,33 +5,29 @@ import CustomizedInput from "../components/shared/CustomizedInput";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-
-const Login = () => {
+const Signup = () => {
   const navigate = useNavigate();
   const auth = useAuth();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-
     try {
-      toast.loading("Signing In", { id: "login" });
-      await auth?.login(email, password);
-      toast.success("Signed In Successfully", { id: "login" });
+      toast.loading("Signing Up", { id: "signup" });
+      await auth?.signup(name, email, password);
+      toast.success("Signed Up Successfully", { id: "signup" });
     } catch (error) {
-      console.error(error); // Use console.error for better visibility
-      toast.error("Signing In Failed: " + (error instanceof Error ? error.message : "Unknown error"), { id: "login" });
+      console.log(error);
+      toast.error("Signing Up Failed", { id: "signup" });
     }
   };
-
   useEffect(() => {
     if (auth?.user) {
-      navigate("/Chat");
+      navigate("/chat");
     }
-  }, [auth?.user, navigate]); // Use auth?.user in dependency array
-
+  }, [auth]);
   return (
     <Box width={"100%"} height={"100%"} display="flex" flex={1}>
       <Box padding={8} mt={8} display={{ md: "flex", sm: "none", xs: "none" }}>
@@ -69,8 +65,9 @@ const Login = () => {
               padding={2}
               fontWeight={600}
             >
-              Login
+              Signup
             </Typography>
+            <CustomizedInput type="text" name="name" label="Name" />
             <CustomizedInput type="email" name="email" label="Email" />
             <CustomizedInput type="password" name="password" label="Password" />
             <Button
@@ -89,7 +86,7 @@ const Login = () => {
               }}
               endIcon={<IoIosLogIn />}
             >
-              Login
+              Signup
             </Button>
           </Box>
         </form>
@@ -98,4 +95,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
